@@ -397,7 +397,6 @@
 
     /* Tipos específicos IA / ML */
     .t-prompt { background: var(--pdim); color: var(--pink);   border: 1px solid rgba(255, 111, 216, .25); }
-    .t-agent  { background: var(--vdim); color: var(--violet); border: 1px solid rgba(176, 136, 255, .25); }
 
     /* Breaking change — resaltado con borde más marcado */
     .t-breaking {
@@ -842,6 +841,7 @@
           <div class="ref-item"><span class="tb t-visual">visual</span><span class="rdesc">Nuevo gráfico o cambio de visual</span></div>
           <div class="ref-item"><span class="tb t-layout">layout</span><span class="rdesc">Rediseño de página o reporte</span></div>
           <div class="ref-item"><span class="tb t-source">source</span><span class="rdesc">Cambio de fuente o conector</span></div>
+          <div class="ref-item"><span class="tb t-role">role</span><span class="rdesc">Roles y seguridad RLS</span></div>
         </div>
       </div>
 
@@ -1195,8 +1195,6 @@
 
     /* Construye el Markdown completo */
     let md = '';
-    md += `> Un entry por ticket/solicitud. Agregar siempre arriba. Nunca borrar entries anteriores.\n\n`;
-    md += `---\n\n`;
     md += `# CHANGELOG — ${proyecto}\n\n`;
     md += `## [${fecha}] · ${titulo}\n\n`;
     md += `| Campo | Valor |\n`;
