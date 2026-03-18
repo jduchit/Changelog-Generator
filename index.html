@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changelog Generator — Data Engineering</title>
+
+  <!-- Fuentes: JetBrains Mono para código/badges, Inter para texto general -->
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+
+    /* ============================================================
+       VARIABLES GLOBALES — colores, tipografía, radios de borde
+       ============================================================ */
+    :root {
+      /* Fondos — de más oscuro a más claro */
+      --bg:      #13151f;
+      --s1:      #191c28;
+      --s2:      #1e2232;
+      --s3:      #252a3d;
+      --s4:      #2c3149;
+
+      /* Bordes sutiles */
+      --border:  rgba(255, 255, 255, .07);
+      --border2: rgba(255, 255, 255, .13);
+
+      /* Colores de acento por plataforma / tipo */
+      --blue:   #6b8cff;  --blue2:  #4f6fe8;  --bdim:  rgba(107, 140, 255, .12);
+      --teal:   #00d4aa;                       --tdim:  rgba(0,   212, 170, .10);
+      --amber:  #ffb730;                       --adim:  rgba(255, 183,  48, .10);
+      --rose:   #ff6b8a;                       --rdim:  rgba(255, 107, 138, .10);
+      --violet: #b088ff;                       --vdim:  rgba(176, 136, 255, .10);
+      --green:  #4ddb8f;                       --gdim:  rgba( 77, 219, 143, .10);
+      --sky:    #38c5f5;                       --sdim:  rgba( 56, 197, 245, .10);
+      --orange: #ff9950;                       --odim:  rgba(255, 153,  80, .10);
+      --pink:   #ff6fd8;                       --pdim:  rgba(255, 111, 216, .10);
+
+      /* Texto — primario, secundario, apagado */
+      --text:  #e8eaf6;
+      --text2: #7b82a8;
+      --text3: #454d6e;
+
+      /* Tipografías */
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Inter', sans-serif;
+
+      /* Radios de borde */
+      --r:   12px;
+      --rsm:  8px;
+    }
+
+
+    /* ============================================================
+       RESET Y BASE
+       ============================================================ */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      /* Gradiente radial sutil en la parte superior para dar profundidad */
+      background-image: radial-gradient(ellipse 80% 40% at 50% -10%, rgba(107, 140, 255, .07) 0%, transparent 70%);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      padding: 44px 24px 80px;
+    }
+
+    /* Contenedor máximo centrado */
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+
+    /* ============================================================
+       HERO — encabezado principal de la página
+       ============================================================ */
+    .hero {
+      margin-bottom: 32px;
+    }
+
+    /* Pill/tag con punto animado */
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--bdim);
+      border: 1px solid rgba(107, 140, 255, .2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      margin-bottom: 14px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+
+    /* Punto pulsante de la pill */
+    .htdot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--blue);
+      animation: blink 2.4s infinite;
+    }
+
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -.03em;
+      margin-bottom: 6px;
+    }
+
+    .hero h1 span { color: var(--blue); }
+
+    .hero p {
+      font-size: 13.5px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+
+    /* ============================================================
+       INSTRUCCIONES — 4 reglas del changelog en grid
+       ============================================================ */
+    .instr {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .instr-item {
+      background: var(--s1);
+      padding: 15px 16px;
+      border-right: 1px solid var(--border);
+    }
+
+    .instr-item:last-child { border-right: none; }
+
+    /* Número circular de cada regla */
+    .inum {
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      background: var(--bdim);
+      border: 1px solid rgba(107, 140, 255, .25);
+      color: var(--blue);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .ititle {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .idesc {
+      font-size: 11px;
+      color: var(--text2);
+      line-height: 1.55;
+    }
+
+
+    /* ============================================================
+       REFERENCIA DE TIPOS — panel colapsable con tipos por plataforma
+       ============================================================ */
+
+    /* Botón que abre/cierra el panel */
+    .ref-toggle {
+      width: 100%;
+      padding: 11px 16px;
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      color: var(--text2);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all .15s;
+      margin-bottom: 0;
+      user-select: none;
+    }
+
+    .ref-toggle:hover {
+      background: var(--s2);
+      border-color: var(--border2);
+      color: var(--text);
+    }
+
+    /* Cuando está abierto, aplana el borde inferior para unirlo al panel */
+    .ref-toggle.open {
+      border-radius: var(--r) var(--r) 0 0;
+      border-bottom-color: transparent;
+      background: var(--s2);
+    }
+
+    /* Flecha que rota al abrir */
+    .ref-arr {
+      font-size: 11px;
+      transition: transform .2s;
+      display: inline-block;
+      color: var(--text3);
+    }
+
+    .ref-toggle.open .ref-arr {
+      transform: rotate(180deg);
+      color: var(--blue);
+    }
+
+    .ref-tl {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    /* Punto decorativo en el toggle */
+    .rfdot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+      opacity: .6;
+    }
+
+    /* Panel oculto por defecto, visible con clase .open */
+    .ref-panel {
+      display: none;
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--r) var(--r);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .ref-panel.open { display: block; }
+
+    /* Sección de tipos base — fondo distinto para destacar */
+    .ref-base {
+      background: var(--s2);
+      border-radius: var(--rsm);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+
+    /* Título de la sección base con línea decorativa */
+    .ref-base-title {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .ref-base-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border2);
+    }
+
+    /* Grid de 4 columnas para tipos base */
+    .ref-base-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px 12px;
+    }
+
+    /* Grid 2 columnas para plataformas específicas */
+    .ref-plats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border); /* el gap actúa como separador */
+      border-radius: var(--rsm);
+      overflow: hidden;
+    }
+
+    .ref-plat {
+      background: var(--s1);
+      padding: 12px 14px;
+    }
+
+    /* Encabezado de cada plataforma con barra de color */
+    .ref-plat-h {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      margin-bottom: 9px;
+    }
+
+    /* Barra vertical de color identificador de plataforma */
+    .rpbar {
+      width: 3px;
+      height: 13px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .ref-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    /* Fila de un tipo: badge + descripción */
+    .ref-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rdesc {
+      font-size: 11.5px;
+      color: var(--text2);
+      line-height: 1.3;
+    }
+
+
+    /* ============================================================
+       BADGES DE TIPO — colores por cada tipo de cambio
+       ============================================================ */
+    .tb {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Tipos base (Conventional Commits) */
+    .t-feat     { background: var(--tdim); color: var(--teal);   border: 1px solid rgba(0,   212, 170, .25); }
+    .t-fix      { background: var(--rdim); color: var(--rose);   border: 1px solid rgba(255, 107, 138, .25); }
+    .t-refactor { background: var(--vdim); color: var(--violet); border: 1px solid rgba(176, 136, 255, .25); }
+    .t-perf     { background: var(--gdim); color: var(--green);  border: 1px solid rgba( 77, 219, 143, .25); }
+    .t-chore    { background: var(--sdim); color: var(--sky);    border: 1px solid rgba( 56, 197, 245, .25); }
+    .t-data     { background: var(--adim); color: var(--amber);  border: 1px solid rgba(255, 183,  48, .25); }
+    .t-config   { background: var(--sdim); color: var(--sky);    border: 1px solid rgba( 56, 197, 245, .25); }
+
+    /* Tipos específicos Power BI */
+    .t-visual   { background: var(--bdim); color: var(--blue);   border: 1px solid rgba(107, 140, 255, .25); }
+    .t-measure  { background: var(--tdim); color: var(--teal);   border: 1px solid rgba(0,   212, 170, .25); }
+    .t-model    { background: var(--vdim); color: var(--violet); border: 1px solid rgba(176, 136, 255, .25); }
+    .t-layout   { background: var(--adim); color: var(--amber);  border: 1px solid rgba(255, 183,  48, .25); }
+    .t-source   { background: var(--sdim); color: var(--sky);    border: 1px solid rgba( 56, 197, 245, .25); }
+
+    /* Tipos específicos ADF */
+    .t-pipeline { background: var(--tdim); color: var(--teal);   border: 1px solid rgba(0,   212, 170, .25); }
+    .t-trigger  { background: var(--odim); color: var(--orange); border: 1px solid rgba(255, 153,  80, .25); }
+    .t-linked   { background: var(--sdim); color: var(--sky);    border: 1px solid rgba( 56, 197, 245, .25); }
+    .t-dataset  { background: var(--vdim); color: var(--violet); border: 1px solid rgba(176, 136, 255, .25); }
+
+    /* Tipos específicos AAS */
+    .t-partition { background: var(--gdim); color: var(--green); border: 1px solid rgba( 77, 219, 143, .25); }
+    .t-role      { background: var(--rdim); color: var(--rose);  border: 1px solid rgba(255, 107, 138, .25); }
+
+    /* Tipos específicos Logic Apps */
+    .t-flow { background: var(--tdim); color: var(--teal); border: 1px solid rgba(0, 212, 170, .25); }
+    .t-conn { background: var(--sdim); color: var(--sky);  border: 1px solid rgba(56, 197, 245, .25); }
+
+    /* Tipos específicos IA / ML */
+    .t-prompt { background: var(--pdim); color: var(--pink);   border: 1px solid rgba(255, 111, 216, .25); }
+    .t-agent  { background: var(--vdim); color: var(--violet); border: 1px solid rgba(176, 136, 255, .25); }
+
+    /* Breaking change — resaltado con borde más marcado */
+    .t-breaking {
+      background: rgba(255, 107, 138, .08);
+      color: var(--rose);
+      border: 1px solid rgba(255, 107, 138, .4);
+      font-style: italic;
+    }
+
+
+    /* ============================================================
+       CARDS — contenedores de secciones del formulario
+       ============================================================ */
+    .card {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    /* Header gris del card con título */
+    .ch {
+      padding: 11px 16px;
+      background: var(--s2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Texto del título del card (monospace, uppercase) */
+    .ct {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--text3);
+    }
+
+    /* Cuerpo del card con padding */
+    .cb { padding: 16px; }
+
+
+    /* ============================================================
+       CAMPOS DEL FORMULARIO
+       ============================================================ */
+
+    /* Grid de 2 columnas para campos del encabezado */
+    .g2   { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .full { grid-column: 1 / -1; } /* Ocupa todo el ancho */
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    /* Etiquetas de campo en monospace */
+    label {
+      font-size: 10px;
+      font-family: var(--mono);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text3);
+    }
+
+    /* Estilos base para inputs, selects y textareas */
+    input, select, textarea {
+      font-family: var(--sans);
+      font-size: 13px;
+      padding: 9px 12px;
+      border-radius: var(--rsm);
+      border: 1px solid var(--border);
+      background: var(--s2);
+      color: var(--text);
+      transition: border-color .15s, background .15s, box-shadow .15s;
+      width: 100%;
+    }
+
+    input:hover, select:hover, textarea:hover {
+      border-color: var(--border2);
+    }
+
+    /* Focus con glow azul sutil */
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: rgba(107, 140, 255, .5);
+      background: var(--s3);
+      box-shadow: 0 0 0 3px rgba(107, 140, 255, .08);
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--text3); }
+
+    textarea {
+      resize: vertical;
+      min-height: 54px;
+      line-height: 1.5;
+    }
+
+    /* Select con flecha personalizada en SVG */
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23454d6e'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 11px center;
+      padding-right: 28px;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    select option { background: #1e2232; }
+
+
+    /* ============================================================
+       FILAS DE CAMBIO — cada cambio individual del changelog
+       ============================================================ */
+    .rows-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .row-item {
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--border2); /* borde izquierdo que cambia color según plataforma */
+      border-radius: var(--rsm);
+      padding: 13px 13px 13px 15px;
+      position: relative;
+      transition: border-color .15s;
+    }
+
+    .row-item:hover { border-color: var(--border2); }
+
+    /* Fila superior: número de cambio + botón eliminar */
+    .row-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 11px;
+    }
+
+    /* Badge con número de cambio */
+    .rnbadge {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      background: var(--s3);
+      border: 1px solid var(--border);
+      padding: 2px 9px;
+      border-radius: 20px;
+    }
+
+    /* Botón eliminar fila */
+    .del {
+      background: none;
+      border: 1px solid transparent;
+      color: var(--text3);
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      padding: 3px 8px;
+      border-radius: 6px;
+      transition: all .14s;
+    }
+
+    .del:hover {
+      color: var(--rose);
+      background: var(--rdim);
+      border-color: rgba(255, 107, 138, .2);
+    }
+
+    /* Grid 3 columnas: plataforma, tipo, carpeta */
+    .rg3 { display: grid; grid-template-columns: 155px 115px 1fr; gap: 9px; margin-bottom: 9px; }
+
+    /* Grid 2 columnas: campos pareados */
+    .rg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+
+    /* Select en fuente monospace para los tipos */
+    .mono-sel { font-family: var(--mono) !important; font-size: 12px !important; }
+
+    /* Color del borde izquierdo según plataforma seleccionada */
+    .row-item[data-plat="Databricks"]  { border-left-color: var(--amber);  }
+    .row-item[data-plat="Power BI"]    { border-left-color: var(--blue);   }
+    .row-item[data-plat="ADF"]         { border-left-color: var(--teal);   }
+    .row-item[data-plat="AAS"]         { border-left-color: var(--violet); }
+    .row-item[data-plat="Logic Apps"]  { border-left-color: var(--rose);   }
+    .row-item[data-plat="IA / ML"]     { border-left-color: var(--pink);   }
+
+    /* Botón para agregar nueva fila de cambio */
+    .add-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px dashed var(--border2);
+      border-radius: var(--rsm);
+      background: none;
+      color: var(--text2);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .add-btn:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: var(--bdim);
+    }
+
+
+    /* ============================================================
+       BOTONES DE ACCIÓN — Limpiar y Generar
+       ============================================================ */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      padding: 11px 20px;
+      border-radius: var(--rsm);
+      font-family: var(--sans);
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .14s;
+      border: none;
+      letter-spacing: -.01em;
+    }
+
+    /* Botón primario con gradiente azul */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+      color: #fff;
+      flex: 1;
+      box-shadow: 0 4px 14px rgba(107, 140, 255, .22);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(107, 140, 255, .32);
+    }
+
+    /* Botón secundario fantasma */
+    .btn-ghost {
+      background: var(--s2);
+      color: var(--text2);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--s3);
+      color: var(--text);
+      border-color: var(--border2);
+    }
+
+
+    /* ============================================================
+       PANEL DE OUTPUT — Markdown generado listo para copiar
+       ============================================================ */
+    .out-card { display: none; margin-top: 14px; }
+    .out-card.show { display: block; animation: up .3s ease both; }
+
+    /* Fila con botón copiar y mensaje de confirmación */
+    .copy-row { display: flex; align-items: center; gap: 8px; }
+
+    .copy-btn {
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--s3);
+      color: var(--text2);
+      font-size: 12px;
+      cursor: pointer;
+      font-family: var(--sans);
+      font-weight: 500;
+      transition: all .14s;
+    }
+
+    .copy-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* Mensaje "Copiado" que aparece y desaparece */
+    .copied {
+      font-size: 11px;
+      color: var(--teal);
+      opacity: 0;
+      transition: opacity .3s;
+      font-family: var(--mono);
+    }
+
+    .copied.show { opacity: 1; }
+
+    /* Bloque de texto del Markdown generado */
+    pre {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--text2);
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.7;
+      max-height: 440px;
+      overflow-y: auto;
+      padding: 2px 0;
+    }
+
+
+    /* ============================================================
+       ANIMACIONES
+       ============================================================ */
+
+    /* Entrada desde abajo con fade */
+    @keyframes up {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* Parpadeo del punto en el hero tag */
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: .2; }
+    }
+
+
+    /* ============================================================
+       RESPONSIVE — adaptaciones para pantallas pequeñas
+       ============================================================ */
+    @media (max-width: 700px) {
+      .instr                { grid-template-columns: 1fr 1fr; }
+      .instr-item           { border-bottom: 1px solid var(--border); }
+      .g2, .rg3, .rg2,
+      .ref-plats,
+      .ref-base-grid        { grid-template-columns: 1fr; }
+      .full                 { grid-column: 1; }
+      body                  { padding: 24px 16px 60px; }
+    }
+
+  </style>
+</head>
+<body>
+<div class="page">
+
+
+  <!-- ============================================================
+       HERO — título y descripción de la herramienta
+       ============================================================ -->
+  <div class="hero">
+    <div class="hero-tag">
+      <span class="htdot"></span>
+      Data Engineering · Changelog Generator
+    </div>
+    <h1>Changelog <span>Generator</span></h1>
+    <p>Completa el formulario, genera el Markdown y pega directo en Azure DevOps Wiki.</p>
+  </div>
+
+
+  <!-- ============================================================
+       INSTRUCCIONES — 4 reglas fundamentales del changelog
+       ============================================================ -->
+  <div class="instr">
+    <div class="instr-item">
+      <div class="inum">1</div>
+      <div class="ititle">Un entry por ticket</div>
+      <div class="idesc">Cada cambio tiene su propio registro. No agrupes múltiples solicitudes</div>
+    </div>
+    <div class="instr-item">
+      <div class="inum">2</div>
+      <div class="ititle">Siempre agregar arriba</div>
+      <div class="idesc">El entry más reciente va al inicio, nunca al final del changelog</div>
+    </div>
+    <div class="instr-item">
+      <div class="inum">3</div>
+      <div class="ititle">Nunca borrar entries</div>
+      <div class="idesc">El historial es trazabilidad. Los errores se corrigen con un nuevo entry</div>
+    </div>
+    <div class="instr-item">
+      <div class="inum">4</div>
+      <div class="ititle">Plataforma por fila</div>
+      <div class="idesc">Un ticket puede tocar varias plataformas — cada una en su propia fila</div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       REFERENCIA DE TIPOS — panel colapsable (cerrado por defecto)
+       Muestra los tipos de cambio disponibles por plataforma
+       ============================================================ -->
+  <button class="ref-toggle" id="ref-toggle" onclick="toggleRef()">
+    <span class="ref-tl">
+      <span class="rfdot"></span>
+      Referencia de tipos por plataforma
+    </span>
+    <span class="ref-arr">▾</span>
+  </button>
+
+  <div class="ref-panel" id="ref-panel">
+
+    <!-- Tipos base: aplican a todas las plataformas (Conventional Commits) -->
+    <div class="ref-base">
+      <div class="ref-base-title">Base — aplica a todas las plataformas</div>
+      <div class="ref-base-grid">
+        <div class="ref-item"><span class="tb t-feat">feat</span><span class="rdesc">Nueva funcionalidad</span></div>
+        <div class="ref-item"><span class="tb t-fix">fix</span><span class="rdesc">Bug o dato incorrecto</span></div>
+        <div class="ref-item"><span class="tb t-refactor">refactor</span><span class="rdesc">Reorganización sin cambio lógico</span></div>
+        <div class="ref-item"><span class="tb t-perf">perf</span><span class="rdesc">Optimización de rendimiento</span></div>
+        <div class="ref-item"><span class="tb t-chore">chore</span><span class="rdesc">Mantenimiento y limpieza</span></div>
+        <div class="ref-item"><span class="tb t-data">data</span><span class="rdesc">Recarga o actualización de datos</span></div>
+        <div class="ref-item"><span class="tb t-breaking">breaking!</span><span class="rdesc">Rompe compatibilidad</span></div>
+      </div>
+    </div>
+
+    <!-- Tipos específicos por plataforma en grid 2 columnas -->
+    <div class="ref-plats">
+
+      <!-- Databricks -->
+      <div class="ref-plat">
+        <div class="ref-plat-h" style="color: var(--amber);">
+          <span class="rpbar" style="background: var(--amber);"></span>Databricks
+        </div>
+        <div class="ref-list">
+          <div class="ref-item"><span class="tb t-config">config</span><span class="rdesc">Filtros, mappings, reglas de negocio</span></div>
+          <div class="ref-item"><span class="tb t-data">data</span><span class="rdesc">Recarga de tablas bronze/ silver / gold</span></div>
+          <div class="ref-item"><span class="tb t-feat">feat</span><span class="rdesc">Nuevo notebook o funcionalidad</span></div>
+          <div class="ref-item"><span class="tb t-perf">perf</span><span class="rdesc">Optimización de queries o jobs</span></div>
+        </div>
+      </div>
+
+      <!-- Power BI -->
+      <div class="ref-plat">
+        <div class="ref-plat-h" style="color: var(--blue);">
+          <span class="rpbar" style="background: var(--blue);"></span>Power BI
+        </div>
+        <div class="ref-list">
+          <div class="ref-item"><span class="tb t-visual">visual</span><span class="rdesc">Nuevo gráfico o cambio de visual</span></div>
+          <div class="ref-item"><span class="tb t-layout">layout</span><span class="rdesc">Rediseño de página o reporte</span></div>
+          <div class="ref-item"><span class="tb t-source">source</span><span class="rdesc">Cambio de fuente o conector</span></div>
+        </div>
+      </div>
+
+      <!-- ADF (Azure Data Factory) -->
+      <div class="ref-plat">
+        <div class="ref-plat-h" style="color: var(--teal);">
+          <span class="rpbar" style="background: var(--teal);"></span>ADF
+        </div>
+        <div class="ref-list">
+          <div class="ref-item"><span class="tb t-pipeline">pipeline</span><span class="rdesc">Nuevo pipeline o actividad</span></div>
+          <div class="ref-item"><span class="tb t-trigger">trigger</span><span class="rdesc">Cambio de schedule o disparador</span></div>
+          <div class="ref-item"><span class="tb t-linked">linked</span><span class="rdesc">Linked service o conexión</span></div>
+          <div class="ref-item"><span class="tb t-feat">feat</span><span class="rdesc">Nuevo flujo de datos</span></div>
+          <div class="ref-item"><span class="tb t-perf">perf</span><span class="rdesc">Optimización de flujo</span></div>
+        </div>
+      </div>
+
+      <!-- AAS (Azure Analysis Services) -->
+      <div class="ref-plat">
+        <div class="ref-plat-h" style="color: var(--violet);">
+          <span class="rpbar" style="background: var(--violet);"></span>AAS
+        </div>
+        <div class="ref-list">
+          <div class="ref-item"><span class="tb t-model">model</span><span class="rdesc">Cambio en modelo tabular</span></div>
+          <div class="ref-item"><span class="tb t-measure">measure</span><span class="rdesc">Medida DAX nueva o editada</span></div>
+          <div class="ref-item"><span class="tb t-role">role</span><span class="rdesc">Roles y seguridad RLS</span></div>
+          <div class="ref-item"><span class="tb t-source">source</span><span class="rdesc">Cambio de fuente de datos</span></div>
+          <div class="ref-item"><span class="tb t-perf">perf</span><span class="rdesc">Optimización del modelo</span></div>
+        </div>
+      </div>
+
+      <!-- Logic Apps -->
+      <div class="ref-plat">
+        <div class="ref-plat-h" style="color: var(--rose);">
+          <span class="rpbar" style="background: var(--rose);"></span>Logic Apps
+        </div>
+        <div class="ref-list">
+          <div class="ref-item"><span class="tb t-flow">flow</span><span class="rdesc">Nuevo flujo o paso</span></div>
+          <div class="ref-item"><span class="tb t-trigger">trigger</span><span class="rdesc">Cambio de disparador</span></div>
+          <div class="ref-item"><span class="tb t-conn">conn</span><span class="rdesc">Conexión o conector</span></div>
+          <div class="ref-item"><span class="tb t-feat">feat</span><span class="rdesc">Nueva lógica</span></div>
+          <div class="ref-item"><span class="tb t-fix">fix</span><span class="rdesc">Error en condición o lógica</span></div>
+          <div class="ref-item"><span class="tb t-config">config</span><span class="rdesc">Ajuste de parámetros</span></div>
+        </div>
+      </div>
+
+      <!-- IA / ML -->
+      <div class="ref-plat">
+        <div class="ref-plat-h" style="color: var(--pink);">
+          <span class="rpbar" style="background: var(--pink);"></span>IA / ML
+        </div>
+        <div class="ref-list">
+          <div class="ref-item"><span class="tb t-prompt">prompt</span><span class="rdesc">Cambio en prompt o instrucción</span></div>
+        </div>
+      </div>
+
+    </div><!-- /ref-plats -->
+  </div><!-- /ref-panel -->
+
+
+  <!-- ============================================================
+       ENCABEZADO DEL ENTRY — datos generales del changelog
+       ============================================================ -->
+  <div class="card" style="margin-top: 20px;">
+    <div class="ch">
+      <span class="ct">Encabezado del entry</span>
+    </div>
+    <div class="cb">
+      <div class="g2">
+
+        <!-- Nombre del proyecto — ocupa todo el ancho -->
+        <div class="field full">
+          <label>Nombre del proyecto</label>
+          <input id="proyecto" placeholder="Ej. 13_Ventas_Dashboard" />
+        </div>
+
+        <!-- Fecha y título en la misma fila -->
+        <div class="field">
+          <label>Fecha</label>
+          <input type="date" id="fecha" />
+        </div>
+        <div class="field">
+          <label>Título del correo / ticket</label>
+          <input id="titulo" placeholder="Ej. Ajuste de filtros en reporte" />
+        </div>
+
+        <!-- Solicitante y email -->
+        <div class="field">
+          <label>Solicitado por</label>
+          <input id="solicitado" placeholder="Nombre completo" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="correo@empresa.com" />
+        </div>
+
+        <!-- Alcance del cambio -->
+        <div class="field">
+          <label>Aplica a</label>
+          <input id="aplica" placeholder="Ej. Solo producción — staging no se modifica" />
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       DETALLE DE CAMBIOS — filas dinámicas, una por cambio
+       ============================================================ -->
+  <div class="card">
+    <div class="ch">
+      <span class="ct">Detalle de cambios</span>
+      <!-- Contador de filas actualizado dinámicamente -->
+      <span id="rc" style="font-size: 9px; color: var(--text3); font-family: var(--mono); letter-spacing: .1em;"></span>
+    </div>
+    <div class="cb">
+      <!-- Contenedor donde se insertan las filas dinámicas -->
+      <div class="rows-wrap" id="rows"></div>
+      <button class="add-btn" onclick="addRow()">
+        <span style="font-size: 16px; color: var(--blue); line-height: 1; opacity: .8;">+</span>
+        Agregar cambio
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       BOTONES DE ACCIÓN
+       ============================================================ -->
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="clearAll()">Limpiar todo</button>
+    <button class="btn btn-primary" onclick="generate()">Generar Markdown →</button>
+  </div>
+
+
+  <!-- ============================================================
+       OUTPUT — Markdown generado listo para copiar a DevOps Wiki
+       Oculto hasta que se presiona "Generar Markdown"
+       ============================================================ -->
+  <div class="card out-card" id="out-card">
+    <div class="ch">
+      <span class="ct">Markdown — copiar y pegar en DevOps Wiki</span>
+      <span class="copy-row">
+        <button class="copy-btn" onclick="copyMd()">Copiar</button>
+        <span class="copied" id="copied">✓ Copiado</span>
+      </span>
+    </div>
+    <div class="cb">
+      <pre id="md-out"></pre>
+    </div>
+  </div>
+
+
+</div><!-- /page -->
+
+
+<script>
+
+  /* ============================================================
+     DATOS — tipos de cambio disponibles por plataforma
+     Basado en Conventional Commits + tipos específicos por stack
+     ============================================================ */
+  const TIPOS_POR_PLATAFORMA = {
+    'Databricks': ['feat', 'fix', 'refactor', 'perf', 'chore', 'data', 'config', 'breaking!'],
+    'Power BI':   ['feat', 'fix', 'perf', 'visual', 'measure', 'model', 'layout', 'source', 'chore', 'breaking!'],
+    'ADF':        ['feat', 'fix', 'perf', 'pipeline', 'trigger', 'linked', 'dataset', 'chore', 'refactor', 'breaking!'],
+    'AAS':        ['feat', 'fix', 'perf', 'model', 'measure', 'partition', 'role', 'chore', 'breaking!'],
+    'Logic Apps': ['feat', 'fix', 'flow', 'trigger', 'conn', 'chore', 'refactor', 'config', 'breaking!'],
+    'IA / ML':    ['feat', 'fix', 'prompt', 'agent', 'model', 'perf', 'chore', 'breaking!'],
+    'Otro':       ['feat', 'fix', 'refactor', 'perf', 'chore', 'data', 'config', 'breaking!']
+  };
+
+  const PLATAFORMAS = ['Databricks', 'Power BI', 'ADF', 'AAS', 'Logic Apps', 'IA / ML', 'Otro'];
+
+  /* Contador global de filas — se incrementa al agregar, nunca decrementa
+     (así los IDs son únicos aunque se eliminen filas) */
+  let contadorFilas = 0;
+
+
+  /* ============================================================
+     HELPERS DE SELECT — generan las opciones HTML de los selects
+     ============================================================ */
+
+  /* Genera options para el select de plataformas */
+  function opcionesPlataforma() {
+    return PLATAFORMAS
+      .map(p => `<option value="${p}">${p}</option>`)
+      .join('');
+  }
+
+  /* Genera options para el select de tipos según la plataforma seleccionada
+     cur: valor actualmente seleccionado (para mantenerlo al cambiar plataforma) */
+  function opcionesTipo(plataforma, cur) {
+    const tipos = TIPOS_POR_PLATAFORMA[plataforma] || TIPOS_POR_PLATAFORMA['Otro'];
+    return tipos
+      .map(t => `<option value="${t}"${t === cur ? ' selected' : ''}>${t}</option>`)
+      .join('');
+  }
+
+
+  /* ============================================================
+     GESTIÓN DE FILAS — agregar, eliminar, actualizar contador
+     ============================================================ */
+
+  /* Agrega una nueva fila de cambio al formulario */
+  function addRow() {
+    contadorFilas++;
+    const id  = contadorFilas;
+    const platDefecto = 'Databricks';
+
+    const div = document.createElement('div');
+    div.className    = 'row-item';
+    div.id           = 'row-' + id;
+    div.dataset.plat = platDefecto;
+
+    div.innerHTML = `
+      <div class="row-top">
+        <span class="rnbadge">cambio #${id}</span>
+        <button class="del" onclick="delRow(${id})">✕</button>
+      </div>
+
+      <!-- Fila 1: plataforma, tipo, carpeta -->
+      <div class="rg3">
+        <div class="field">
+          <label>Plataforma</label>
+          <select class="mono-sel" id="plat-${id}" onchange="onCambioPlataforma(${id})">
+            ${opcionesPlataforma()}
+          </select>
+        </div>
+        <div class="field">
+          <label>Tipo</label>
+          <select class="mono-sel" id="tipo-${id}">
+            ${opcionesTipo(platDefecto, '')}
+          </select>
+        </div>
+        <div class="field">
+          <label>Carpeta / Sección</label>
+          <input id="carpeta-${id}" placeholder="Ej. 3_Transformacion" />
+        </div>
+      </div>
+
+      <!-- Fila 2: notebook/reporte y tabla/objeto -->
+      <div class="rg2" style="margin-bottom: 9px;">
+        <div class="field">
+          <label>Notebook / Reporte / Pipeline</label>
+          <input id="notebook-${id}" placeholder="Nombre del objeto" />
+        </div>
+        <div class="field">
+          <label>Tabla / Objeto / Medida</label>
+          <input id="tabla-${id}" placeholder="Ej. schema.TABLA" />
+        </div>
+      </div>
+
+      <!-- Fila 3: estado anterior y descripción del cambio -->
+      <div class="rg2">
+        <div class="field">
+          <label>Antes</label>
+          <textarea id="antes-${id}" placeholder="Estado o valor anterior"></textarea>
+        </div>
+        <div class="field">
+          <label>Después</label>
+          <textarea id="despues-${id}" placeholder="Descripción del cambio aplicado"></textarea>
+        </div>
+      </div>`;
+
+    document.getElementById('rows').appendChild(div);
+    actualizarContador();
+  }
+
+  /* Actualiza el select de tipos cuando cambia la plataforma en una fila */
+  function onCambioPlataforma(id) {
+    const plat  = document.getElementById('plat-' + id).value;
+    const actual = document.getElementById('tipo-' + id).value;
+
+    /* Regenera las opciones y mantiene el tipo si sigue disponible */
+    document.getElementById('tipo-' + id).innerHTML = opcionesTipo(plat, actual);
+
+    /* Actualiza el color del borde izquierdo de la fila */
+    document.getElementById('row-' + id).dataset.plat = plat;
+  }
+
+  /* Elimina una fila por su ID */
+  function delRow(id) {
+    document.getElementById('row-' + id)?.remove();
+    actualizarContador();
+  }
+
+  /* Actualiza el texto del contador en el header de "Detalle de cambios" */
+  function actualizarContador() {
+    const n = document.querySelectorAll('.row-item').length;
+    document.getElementById('rc').textContent = n
+      ? `${n} ${n === 1 ? 'FILA' : 'FILAS'}`
+      : '';
+  }
+
+
+  /* ============================================================
+     FORMATO DE FECHA — convierte YYYY-MM-DD a "DD-Mes-YYYY"
+     ============================================================ */
+  function formatearFecha(d) {
+    if (!d) return '';
+    const [anio, mes, dia] = d.split('-');
+    const MESES = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    return `${parseInt(dia)}-${MESES[parseInt(mes) - 1]}-${anio}`;
+  }
+
+  /* Helper: obtiene y limpia el valor de un campo por ID */
+  function val(id) {
+    return (document.getElementById(id)?.value || '').trim();
+  }
+
+
+  /* ============================================================
+     GENERADOR DE MARKDOWN
+     Construye el texto Markdown del changelog a partir del formulario
+     ============================================================ */
+  function generate() {
+
+    /* Datos del encabezado */
+    const proyecto  = val('proyecto')   || 'PROYECTO';
+    const fecha     = formatearFecha(val('fecha'));
+    const titulo    = val('titulo')     || 'Cambios';
+    const solicitado = val('solicitado');
+    const email     = val('email');
+    const aplica    = val('aplica');
+
+    /* Construye las filas de la tabla de cambios */
+    let filasTabla = '';
+    let numero = 1;
+
+    document.querySelectorAll('.row-item').forEach(fila => {
+      const id       = fila.id.replace('row-', '');
+      const plat     = document.getElementById('plat-'     + id)?.value || '';
+      const tipo     = document.getElementById('tipo-'     + id)?.value || '';
+      const carpeta  = document.getElementById('carpeta-'  + id)?.value || '';
+      const notebook = document.getElementById('notebook-' + id)?.value || '';
+      const tabla    = document.getElementById('tabla-'    + id)?.value || '';
+      const antes    = (document.getElementById('antes-'   + id)?.value || '—').replace(/\n/g, ' ');
+      const despues  = (document.getElementById('despues-' + id)?.value || '').replace(/\n/g, ' ');
+
+      filasTabla += `| ${numero} | \`${plat}\` | \`${tipo}\` | \`${carpeta}\` | \`${notebook}\` | \`${tabla}\` | ${antes} | ${despues} |\n`;
+      numero++;
+    });
+
+    /* Arma el solicitante con email si existe */
+    const solicitadoPor = solicitado + (email ? ` · ${email}` : '');
+
+    /* Construye el Markdown completo */
+    let md = '';
+    md += `> Un entry por ticket/solicitud. Agregar siempre arriba. Nunca borrar entries anteriores.\n\n`;
+    md += `---\n\n`;
+    md += `# CHANGELOG — ${proyecto}\n\n`;
+    md += `## [${fecha}] · ${titulo}\n\n`;
+    md += `| Campo | Valor |\n`;
+    md += `|-------|-------|\n`;
+    if (solicitadoPor) md += `| **Solicitado por** | ${solicitadoPor} |\n`;
+    if (aplica)        md += `| **Aplica a** | ${aplica} |\n`;
+    md += `\n### Detalle de cambios\n\n`;
+    md += `| # | Plataforma | Tipo | Carpeta / Sección | Notebook / Reporte | Tabla / Objeto | Antes | Después |\n`;
+    md += `|---|-----------|------|-------------------|--------------------|----------------|-------|--------|\n`;
+    md += filasTabla;
+
+    /* Muestra el resultado y hace scroll al output */
+    document.getElementById('md-out').textContent = md;
+    const cardOutput = document.getElementById('out-card');
+    cardOutput.className = 'card out-card show';
+    cardOutput.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+
+  /* ============================================================
+     COPIAR MARKDOWN AL PORTAPAPELES
+     ============================================================ */
+  function copyMd() {
+    navigator.clipboard.writeText(document.getElementById('md-out').textContent);
+
+    /* Muestra mensaje de confirmación por 2 segundos */
+    const msg = document.getElementById('copied');
+    msg.className = 'copied show';
+    setTimeout(() => msg.className = 'copied', 2000);
+  }
+
+
+  /* ============================================================
+     LIMPIAR FORMULARIO — resetea todos los campos
+     ============================================================ */
+  function clearAll() {
+    /* Elimina todas las filas de cambios */
+    document.getElementById('rows').innerHTML = '';
+    contadorFilas = 0;
+    actualizarContador();
+
+    /* Limpia campos del encabezado */
+    ['proyecto', 'titulo', 'solicitado', 'email', 'aplica']
+      .forEach(id => document.getElementById(id).value = '');
+
+    /* Restaura la fecha a hoy */
+    document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+
+    /* Oculta el panel de output */
+    document.getElementById('out-card').className = 'card out-card';
+  }
+
+
+  /* ============================================================
+     TOGGLE REFERENCIA — abre/cierra el panel de tipos
+     ============================================================ */
+  function toggleRef() {
+    document.getElementById('ref-toggle').classList.toggle('open');
+    document.getElementById('ref-panel').classList.toggle('open');
+  }
+
+
+  /* ============================================================
+     INICIALIZACIÓN — se ejecuta al cargar la página
+     ============================================================ */
+
+  /* Establece la fecha de hoy por defecto */
+  document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+
+  /* Agrega la primera fila vacía para que el formulario no aparezca vacío */
+  addRow();
+
+</script>
+</body>
+</html>
