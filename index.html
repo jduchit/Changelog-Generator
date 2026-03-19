@@ -1189,9 +1189,9 @@
       const carpeta  = document.getElementById('carpeta-'  + id)?.value || '';
       const notebook = document.getElementById('notebook-' + id)?.value || '';
       const tabla    = document.getElementById('tabla-'    + id)?.value || '';
-      const antes    = (document.getElementById('antes-'   + id)?.value || '—').replace(/\n/g, ' ');
-      const despues  = (document.getElementById('despues-' + id)?.value || '').replace(/\n/g, ' ');
-
+      const antes    = (document.getElementById('antes-'   + id)?.value || '—').replace(/\n/g, '<br>');
+      const despues  = (document.getElementById('despues-' + id)?.value || '').replace(/\n/g, '<br>');
+      
       filasTabla += `| ${numero} | \`${plat}\` | \`${tipo}\` | \`${carpeta}\` | \`${notebook}\` | \`${tabla}\` | ${antes} | ${despues} |\n`;
       numero++;
     });
